@@ -1,37 +1,37 @@
 # VolleyVision
 
-**Computer vision-based player detection and tracking for volleyball match footage.**
+Computer vision for volleyball player detection, tracking, and movement heatmaps from recorded matches.
 
-## Goal
+## Showcase scope
 
-Develop a reproducible machine learning pipeline that identifies volleyball players in recorded matches, tracks them across frames, and visualizes their movement.
+Build a reproducible local ABLE Mentor demonstration that:
 
-## Initial scope
+- Detects visible players with a pretrained detector.
+- Tracks players with temporary anonymous IDs.
+- Exports annotated video and per-frame tracking data in CSV or JSON.
+- Generates movement heatmaps after the detection and tracking baseline works.
+- Documents measured results, failure cases, and limitations.
 
-- Player detection using a pretrained object detection model
-- Multi-object tracking with persistent IDs
-- Annotated video export
-- Quantitative evaluation of detection and tracking quality
+Player recognition means detecting players, without identifying names or jersey numbers. Start with a permitted local MP4 from a fixed camera, preferably elevated behind the end line.
 
-## Planned extensions
+## Preferred technology
 
-- Court calibration
-- Player movement trails and heatmaps
-- Fine-tuning on volleyball-specific footage
-- Interactive match analysis interface
+Python, PyTorch, OpenCV, an Ultralytics YOLO-family detector, ByteTrack, NumPy, and pandas, with a minimal CLI and pytest where appropriate. Verify model selection, dependency versions, GPU compatibility, and licensing before integration.
 
-## Technology
+## Status and development
 
-Python, PyTorch, Ultralytics YOLO, OpenCV, ByteTrack
+Week 1 project documentation only. No runnable pipeline, environment setup, or measured model results exist yet.
 
-## Development approach
+Proceed one approved milestone at a time. Discuss how each component works, why it is chosen, its limitations, and presentation questions in chat before implementation. Keep personal learning records out of the repository.
 
-This project prioritizes understanding the underlying computer vision algorithms, reproducible experiments, and honest evaluation over feature count.
+## Documentation
 
-## Status
+- [Project specification](VOLLEYVISION.md)
+- [Problem definition](docs/problem.md)
+- [Local data handling](data/README.md)
 
-**Planning and foundational study.** Model results have not yet been established.
+## Limitations and exclusions
 
-## Limitations
+IDs may change after occlusion or re-entry. Initial support excludes moving cameras and camera cuts. Image-coordinate heatmaps show observed positions in the camera view; top-down court heatmaps require validated calibration. Neither alone establishes running distances or tactical conclusions.
 
-Initial support targets recorded matches with a fixed camera and a clear view of the court. Tracking IDs may change after occlusions. The first version will not identify players by name or recognize volleyball actions.
+Ball tracking, action recognition, named player identification, cloud deployment, and a full web application are outside the showcase scope. Fine-tuning is a later option if baseline evaluation justifies it.
