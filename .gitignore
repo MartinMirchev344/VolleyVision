@@ -1,0 +1,57 @@
+# Python environments and generated files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+build/
+dist/
+
+# Test, lint, and notebook caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.ipynb_checkpoints/
+
+# Local secrets and configuration
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Private datasets, frames, and annotations (keep documentation)
+data/**
+!data/**/
+!data/**/*.md
+
+# Generated tracking exports, heatmaps, and experiment outputs
+outputs/
+runs/
+artifacts/
+wandb/
+
+# Recordings and model weights
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.m4v
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.engine
+*.safetensors
+
+# Local editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
