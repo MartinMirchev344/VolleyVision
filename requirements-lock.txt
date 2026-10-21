@@ -1,0 +1,22 @@
+# Core tools and development checks, tested on Python 3.11 / Windows x64.
+# CUDA packages are optional and listed separately in requirements-cuda.txt.
+alembic==1.20.0
+colorama==0.4.6
+greenlet==3.5.6
+iniconfig==2.3.1
+mako==1.4.3
+markupsafe==3.0.4
+numpy==2.4.6
+opencv-python==4.14.0.94
+packaging==26.3
+pluggy==1.7.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pygments==2.21.0
+pytest==9.1.1
+pyyaml==6.0.3
+ruff==0.17.1
+setuptools==78.1.0
+sqlalchemy==2.0.55
+typing-extensions==4.16.0
+tzdata==2026.5

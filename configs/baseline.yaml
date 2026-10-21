@@ -1,0 +1,3 @@
+# Starting values only. Freeze before a held-out trial; tune on development footage.
+confidence: 0.25
+image_size: 640

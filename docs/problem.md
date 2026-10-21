@@ -1,35 +1,17 @@
 # Problem definition
 
-## Intended use
+Help a volleyball coach or analyst review a permitted recorded rally with player
+tracks, ball detections, candidate action events, and human-reviewed scoring. The
+initial audience is an ABLE Mentor showcase; a usable application is a later goal.
 
-VolleyVision will help a volleyball coach or analyst review where visible players move during an existing match recording. The initial deliverable is a local ABLE Mentor demonstration of player detection, anonymous tracking, and movement heatmaps.
+Use fixed, preferably elevated behind-end-line footage; elevated sideline footage
+is acceptable but may shift model performance. Avoid camera cuts, movement, multiple
+courts and hidden boundaries in the first example. Manual calibration defines both
+the strict court and the playable free zone so legal outside-court play is not
+automatically discarded.
 
-## Supported footage
-
-Use a permitted local MP4. Start with a fixed, preferably elevated camera behind the end line; elevated sideline footage is also acceptable. Select a clip with clear court visibility and no camera cuts or significant camera movement.
-
-## Planned deliverables
-
-1. Detect visible players with a pretrained detector.
-2. Associate detections across frames using temporary anonymous IDs.
-3. Export video with player boxes and IDs, plus per-frame CSV or JSON tracking data.
-4. Generate movement heatmaps after the detection and tracking baseline works.
-5. Provide reproducible local execution and an evidence-backed evaluation or failure analysis.
-
-Heatmaps are part of the showcase scope. Choose their coordinate system and sampling method before implementation. Image-coordinate maps describe observed positions in the camera view. Top-down court maps require calibration and validation of the projection. Document the effects of perspective, occlusion, and identity switches; do not infer precise distances or performance from an unvalidated map.
-
-## Exclusions
-
-- Identification by name or jersey number.
-- Ball tracking, action classification, or tactical recommendations.
-- Guaranteed identity continuity through occlusion, re-entry, or camera cuts.
-- Real-time guarantees, hosting, accounts, payments, or a full web interface.
-- Fine-tuning unless evaluation establishes a need.
-
-## Validation
-
-Evaluate on permitted, representative footage. Record configuration and clip characteristics alongside measured results. Similar uniforms, referees, spectators, partial visibility, and occlusion can cause detection errors and identity switches. Do not claim unmeasured accuracy or runtime.
-
-## Current milestone
-
-Week 1 defines scope and data conventions. Environment setup and video inspection tooling belong to Week 2. Detection, tracking, and heatmaps follow in separate approved steps. Footage suitability, hardware compatibility, and model performance have not been verified.
+Week 1 establishes local tools and feasibility evidence. There is no supplied
+recording or cleared pretrained checkpoint. See `reports/experiments.md` for measured
+checks and unresolved work. A short reliable rally takes priority over a misleading
+whole-match demo. Full analytics, named identities, automatic points, public hosting
+and metric movement estimates are excluded initially.
