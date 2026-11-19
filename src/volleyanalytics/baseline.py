@@ -78,6 +78,8 @@ def run_baseline(
         raise ValueError("Manifest source labels do not match checkpoint class names.")
     class_ids = [key for key, name in model.names.items() if name in class_map]
     if torch.cuda.is_available() and device != "cpu":
+        # The peak-memory counter cannot be reset before CUDA is initialised.
+        torch.cuda.init()
         torch.cuda.reset_peak_memory_stats(int(device))
     output.mkdir(parents=True)
     started = datetime.now(UTC).isoformat()

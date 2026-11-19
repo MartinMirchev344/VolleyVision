@@ -33,7 +33,8 @@ Inspection prints the content hash needed for a private footage permission recor
 Calibration and inference require that record. Detector inference also requires a
 trusted local checkpoint and an explicitly reviewed model manifest; see
 [data and manifest conventions](data/README.md). The core installation does not
-install Ultralytics or fetch weights.
+install Ultralytics or fetch weights; the detector runtime is pinned separately in
+`requirements-models.txt` (see [setup](docs/setup.md)).
 
 ```powershell
 .\.venv\Scripts\python.exe -m volleyanalytics calibrate --input data/rally.mp4 --permission-record data/permission.json --output data/court-v1.json --author reviewer
@@ -57,17 +58,21 @@ New-Item -ItemType Directory -Force outputs | Out-Null
 
 Database integration checks run only with `TEST_DATABASE_URL` set to a dedicated
 test database. Tests create synthetic video; they do not measure volleyball model
-quality. [Experiment results and remaining blockers](reports/experiments.md).
+quality.
 
 ## Project documents
 
 - [Specification and milestones](VOLLEYANALYTICS.md)
 - [Problem definition](docs/problem.md)
-- [Dataset and checkpoint decisions](docs/DATASETS.md)
 - [Evaluation protocol](docs/evaluation-plan.md)
 - [Database and storage design](docs/database.md)
-- [Engineering decisions](docs/decisions.md)
 - [Dependency licensing inventory](docs/dependencies.md)
+
+## Credits
+
+Volleyball datasets and reference code by Shukur Sabzaliev
+([shukkkur/VolleyVision](https://github.com/shukkkur/VolleyVision)), used with the
+author's permission. Datasets published on Roboflow Universe under CC BY 4.0.
 
 Anonymous track IDs can switch after occlusion or re-entry. Calibration does not
 make footpoints exact or identify a person as a player. Candidate actions are not

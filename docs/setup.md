@@ -28,9 +28,17 @@ Optional RTX 5070 verification uses the separately pinned CUDA 12.8 environment:
 ```
 
 The GPU check allocates tensors and performs a matrix multiplication. It does not
-prove detector compatibility or model quality. Ultralytics and all checkpoints are
-still excluded: first resolve code and weight terms in `DATASETS.md`, choose/test
-the exact runtime/checkpoint, then pin them in a separate model environment record.
+prove detector compatibility or model quality.
+
+The detector runtime (Ultralytics, AGPL-3.0; see `dependencies.md`) is pinned
+separately. Install it after the CUDA packages so PyTorch stays the CUDA build, then
+disable Ultralytics usage analytics:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-models.txt
+.\.venv\Scripts\yolo.exe settings sync=False
+```
+
 The baseline adapter requires trusted local `.pt` weights; no implicit downloads.
 
 ## PostgreSQL options

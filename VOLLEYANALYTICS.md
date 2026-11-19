@@ -50,7 +50,7 @@ Record exact dataset/checkpoint versions, source provenance, licenses, attributi
 and permitted educational/commercial uses before downloading or using them. Public
 visibility is insufficient. Review code, weights, labels and source footage separately;
 unclear rights block their use. The reference project's author has permitted reuse of
-its code and datasets; credit the author where they are reused (see `docs/DATASETS.md`).
+its code and datasets; credit the author where they are reused (see `README.md`).
 Keep credentials, private permissions, recordings, extracted frames, labels, and
 weights outside Git. Do not select a public project license implicitly.
 

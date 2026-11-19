@@ -11,7 +11,6 @@ the strict court and the playable free zone so legal outside-court play is not
 automatically discarded.
 
 Week 1 establishes local tools and feasibility evidence. There is no supplied
-recording or cleared pretrained checkpoint. See `reports/experiments.md` for measured
-checks and unresolved work. A short reliable rally takes priority over a misleading
-whole-match demo. Full analytics, named identities, automatic points, public hosting
+recording or selected pretrained checkpoint yet. A short reliable rally takes
+priority over a misleading whole-match demo. Full analytics, named identities, automatic points, public hosting
 and metric movement estimates are excluded initially.

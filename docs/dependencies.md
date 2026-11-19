@@ -18,7 +18,10 @@ describes the core tools, not an approved model checkpoint.
 | Ruff | MIT; https://github.com/astral-sh/ruff/blob/main/LICENSE | Formatting and static checks |
 | PyTorch | BSD-style; https://github.com/pytorch/pytorch/blob/main/LICENSE | Optional GPU diagnostic; separate installation |
 | PostgreSQL | PostgreSQL License; https://www.postgresql.org/about/licence/ | Portable local instance / Compose |
-| Ultralytics | AGPL-3.0 / Enterprise; https://www.ultralytics.com/license | Pending code and checkpoint usage decision; excluded from core installation |
+| Ultralytics | AGPL-3.0 / Enterprise; https://www.ultralytics.com/license | Accepted under AGPL-3.0 for the MVP; pinned in `requirements-models.txt`, excluded from core installation |
+| ultralytics-thop | AGPL-3.0; https://github.com/ultralytics/thop | Ultralytics dependency |
+| lap | BSD-2-Clause; https://github.com/gatagat/lap | Linear assignment for ByteTrack |
+| matplotlib, polars, psutil, requests | Matplotlib License / MIT / BSD-3-Clause / Apache-2.0 | Ultralytics dependencies |
 
 Do not assume a library license grants rights to its pretrained weights or datasets.
 Before distribution, review installed wheel notices and bundled/transitive libraries
