@@ -13,7 +13,7 @@ For a fresh environment, select an installed Python 3.11 interpreter and run:
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
 .\.venv\Scripts\python.exe -m pip install --no-build-isolation --no-deps -e .
-.\.venv\Scripts\python.exe -m volleyvision doctor
+.\.venv\Scripts\python.exe -m volleyanalytics doctor
 ```
 
 On this checkout the local interpreter can replace `py -3.11`:
@@ -24,7 +24,7 @@ Optional RTX 5070 verification uses the separately pinned CUDA 12.8 environment:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-cuda.txt
-.\.venv\Scripts\python.exe -m volleyvision doctor
+.\.venv\Scripts\python.exe -m volleyanalytics doctor
 ```
 
 The GPU check allocates tensors and performs a matrix multiplication. It does not
@@ -39,6 +39,8 @@ Portable PostgreSQL 17.11 is installed under `.tools/postgresql/pgsql/`, with th
 cluster in ignored `data/postgres/`. Local random credentials are in ignored `.env`;
 do not commit or print that file. The application and test databases are
 `volleyvision` and `volleyvision_test`, on **127.0.0.1:55432**, with UTC database time.
+These names predate the VolleyAnalytics rename; they come from `.env` and still
+work unchanged. A fresh Compose setup uses the `volleyanalytics` defaults instead.
 The server is stopped after verification. Start it when needed:
 
 ```powershell
@@ -60,7 +62,7 @@ Get-Content .env | Where-Object { $_ -match '^[A-Z_]+=' } | ForEach-Object {
     $setting = $_ -split '=', 2
     [Environment]::SetEnvironmentVariable($setting[0], $setting[1], 'Process')
 }
-.\.venv\Scripts\python.exe -m volleyvision db-check
+.\.venv\Scripts\python.exe -m volleyanalytics db-check
 .\.venv\Scripts\alembic.exe upgrade head
 .\.venv\Scripts\alembic.exe current
 New-Item -ItemType Directory -Force outputs | Out-Null

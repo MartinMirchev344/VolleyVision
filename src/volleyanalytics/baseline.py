@@ -14,9 +14,9 @@ from uuid import uuid4
 import cv2
 import yaml
 
-from volleyvision.calibration import CourtCalibration
-from volleyvision.provenance import require_model_permission, require_video_permission
-from volleyvision.video import inspect_video, iter_frames
+from volleyanalytics.calibration import CourtCalibration
+from volleyanalytics.provenance import require_model_permission, require_video_permission
+from volleyanalytics.video import inspect_video, iter_frames
 
 
 def run_baseline(

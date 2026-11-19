@@ -1,4 +1,4 @@
-# VolleyVision
+# VolleyAnalytics
 
 Offline volleyball video analysis for a small ABLE Mentor showcase. The target is a
 permitted, fixed-camera rally with court-aware anonymous player tracks, a
@@ -24,9 +24,9 @@ tested environment, optional CUDA packages, and database commands.
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
 .\.venv\Scripts\python.exe -m pip install --no-deps -e .
-.\.venv\Scripts\python.exe -m volleyvision --help
-.\.venv\Scripts\python.exe -m volleyvision doctor
-.\.venv\Scripts\python.exe -m volleyvision inspect --input data/rally.mp4
+.\.venv\Scripts\python.exe -m volleyanalytics --help
+.\.venv\Scripts\python.exe -m volleyanalytics doctor
+.\.venv\Scripts\python.exe -m volleyanalytics inspect --input data/rally.mp4
 ```
 
 Inspection prints the content hash needed for a private footage permission record.
@@ -36,8 +36,8 @@ trusted local checkpoint and an explicitly reviewed model manifest; see
 install Ultralytics or fetch weights.
 
 ```powershell
-.\.venv\Scripts\python.exe -m volleyvision calibrate --input data/rally.mp4 --permission-record data/permission.json --output data/court-v1.json --author reviewer
-.\.venv\Scripts\python.exe -m volleyvision baseline --input data/rally.mp4 --permission-record data/permission.json --model-manifest data/player-model.json --task players --calibration data/court-v1.json --start-sec 0 --end-sec 10 --track --device 0 --output outputs/player-trial-01
+.\.venv\Scripts\python.exe -m volleyanalytics calibrate --input data/rally.mp4 --permission-record data/permission.json --output data/court-v1.json --author reviewer
+.\.venv\Scripts\python.exe -m volleyanalytics baseline --input data/rally.mp4 --permission-record data/permission.json --model-manifest data/player-model.json --task players --calibration data/court-v1.json --start-sec 0 --end-sec 10 --track --device 0 --output outputs/player-trial-01
 ```
 
 Each baseline run writes an annotated MP4, detection CSV/JSONL, a frame ledger
@@ -61,7 +61,7 @@ quality. [Experiment results and remaining blockers](reports/experiments.md).
 
 ## Project documents
 
-- [Specification and milestones](VOLLEYVISION.md)
+- [Specification and milestones](VOLLEYANALYTICS.md)
 - [Problem definition](docs/problem.md)
 - [Dataset and checkpoint decisions](docs/DATASETS.md)
 - [Evaluation protocol](docs/evaluation-plan.md)

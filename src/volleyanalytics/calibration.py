@@ -10,7 +10,7 @@ from typing import Literal
 import cv2
 import numpy as np
 
-from volleyvision.video import file_sha256, reference_frame
+from volleyanalytics.video import file_sha256, reference_frame
 
 Point = tuple[float, float]
 Mode = Literal["strict_court", "court_plus_free_zone"]

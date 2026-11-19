@@ -1,4 +1,4 @@
-# VolleyVision project specification
+# VolleyAnalytics project specification
 
 Architecture approved 21 October 2026. Work in small, reviewable milestones within
 4–6 hours of human effort per week. Final research and architecture decisions belong
@@ -49,7 +49,8 @@ is excluded from the MVP.
 Record exact dataset/checkpoint versions, source provenance, licenses, attribution,
 and permitted educational/commercial uses before downloading or using them. Public
 visibility is insufficient. Review code, weights, labels and source footage separately;
-unclear rights block their use. Do not copy the reference project's implementation.
+unclear rights block their use. The reference project's author has permitted reuse of
+its code and datasets; credit the author where they are reused (see `docs/DATASETS.md`).
 Keep credentials, private permissions, recordings, extracted frames, labels, and
 weights outside Git. Do not select a public project license implicitly.
 

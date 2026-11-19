@@ -1,5 +1,18 @@
 # Engineering decisions
 
+## 19 November 2026 — project renamed to VolleyAnalytics
+
+- The project, Python package (`volleyanalytics`), CLI and storage variable
+  (`VOLLEYANALYTICS_STORAGE_ROOT`) are renamed from VolleyVision. This removes
+  confusion with the upstream reference project `shukkkur/VolleyVision`, whose
+  datasets are audited separately in `DATASETS.md`; references to it keep its name.
+- The specification file is renamed to `VOLLEYANALYTICS.md`.
+- The upstream author granted permission to use the project and its datasets; dataset
+  decisions in `DATASETS.md` are updated accordingly.
+- The existing portable PostgreSQL databases keep their `volleyvision` names. They hold
+  only the bootstrap migration, so renaming them would add risk without benefit.
+- Renaming the GitHub repository and the local checkout folder is left to the developer.
+
 ## 21 October 2026 — feasibility foundations
 
 - The showcase scope includes players, volleyball ball, action events, human scoring

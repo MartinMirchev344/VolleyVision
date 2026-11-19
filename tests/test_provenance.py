@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from volleyvision.provenance import require_model_permission, require_video_permission
-from volleyvision.video import file_sha256
+from volleyanalytics.provenance import require_model_permission, require_video_permission
+from volleyanalytics.video import file_sha256
 
 
 def test_footage_requires_permission_and_matching_content(tmp_path):

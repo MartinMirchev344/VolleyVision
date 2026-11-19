@@ -1,7 +1,7 @@
 import pytest
 
-from volleyvision.cli import main
-from volleyvision.db import database_url
+from volleyanalytics.cli import main
+from volleyanalytics.db import database_url
 
 
 def test_missing_input_has_clear_nonzero_exit(tmp_path, capsys):
@@ -23,7 +23,7 @@ def test_database_driver_exception_is_redacted(monkeypatch, capsys):
     def fail():
         raise RuntimeError("postgresql://user:secret-password@server/db")
 
-    monkeypatch.setattr("volleyvision.db.check_database", fail)
+    monkeypatch.setattr("volleyanalytics.db.check_database", fail)
     assert main(["db-check"]) == 1
     error = capsys.readouterr().err
     assert "RuntimeError" in error

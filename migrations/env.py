@@ -3,7 +3,7 @@
 from alembic import context
 from sqlalchemy import create_engine, pool
 
-from volleyvision.db import Base, database_url
+from volleyanalytics.db import Base, database_url
 
 target_metadata = Base.metadata
 

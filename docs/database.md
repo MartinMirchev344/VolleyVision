@@ -35,7 +35,7 @@ point counters independently of the reviewed records.
 
 Raw/annotated videos live in ignored local folders by default. Store a storage key,
 content hash, size and metadata in PostgreSQL; no raw MP4 bytea or frame-image blobs.
-`VOLLEYVISION_STORAGE_ROOT` will be consumed by ingestion when that feature arrives;
+`VOLLEYANALYTICS_STORAGE_ROOT` will be consumed by ingestion when that feature arrives;
 Week 1 commands instead take explicit local input/output paths.
 
 At ingestion, introduce a minimal `StorageBackend` with read/write/existence/delete

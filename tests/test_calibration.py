@@ -3,7 +3,7 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
-from volleyvision.calibration import CourtCalibration, validate_polygon
+from volleyanalytics.calibration import CourtCalibration, validate_polygon
 
 
 @pytest.fixture

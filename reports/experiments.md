@@ -7,7 +7,7 @@
   `requirements-cuda.txt`. Dependency terms: `docs/dependencies.md`.
 - NVIDIA RTX 5070; driver 617.42; reported GPU memory 12,227 MiB.
 - PyTorch 2.11.0+cu128, torchvision 0.26.0+cu128, CUDA build 12.8.
-- `python -m volleyvision doctor`: CUDA available; device capability 12.0;
+- `python -m volleyanalytics doctor`: CUDA available; device capability 12.0;
   GPU allocation/matrix multiplication/synchronization passed. This is not detector
   inference or a volleyball performance benchmark.
 

@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "volleyvision"
+name = "volleyanalytics"
 version = "0.1.0"
 description = "Offline volleyball vision feasibility tools"
 requires-python = ">=3.11,<3.14"
@@ -20,7 +20,7 @@ dependencies = [
 dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
 
 [project.scripts]
-volleyvision = "volleyvision.cli:main"
+volleyanalytics = "volleyanalytics.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

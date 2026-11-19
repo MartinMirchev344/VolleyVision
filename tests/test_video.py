@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import pytest
 
-from volleyvision.video import inspect_video, iter_frames, reference_frame
+from volleyanalytics.video import inspect_video, iter_frames, reference_frame
 
 
 @pytest.fixture
@@ -57,7 +57,7 @@ def test_unavailable_video_clock_uses_declared_fallback(monkeypatch):
             self.released = True
 
     capture = Capture()
-    monkeypatch.setattr("volleyvision.video.open_video", lambda path: capture)
+    monkeypatch.setattr("volleyanalytics.video.open_video", lambda path: capture)
     frames = list(iter_frames(None, 0, 0.3))
     assert [frame.timestamp_sec for frame in frames] == [0, 0.1, 0.2]
     assert frames[1].timestamp_source == "nominal_fps"

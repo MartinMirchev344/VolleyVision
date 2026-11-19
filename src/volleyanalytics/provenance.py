@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from volleyvision.video import file_sha256
+from volleyanalytics.video import file_sha256
 
 
 def load_json(path: Path) -> dict:

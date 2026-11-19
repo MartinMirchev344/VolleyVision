@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="volleyvision", description=__doc__)
+    parser = argparse.ArgumentParser(prog="volleyanalytics", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("doctor", help="Report installed versions and run a CUDA tensor check")
     commands.add_parser("db-check", help="Check PostgreSQL using DATABASE_URL")
@@ -44,20 +44,20 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         if args.command == "doctor":
-            from volleyvision.diagnostics import environment_report
+            from volleyanalytics.diagnostics import environment_report
 
             result = environment_report()
         elif args.command == "db-check":
-            from volleyvision.db import check_database
+            from volleyanalytics.db import check_database
 
             result = check_database()
         elif args.command == "inspect":
-            from volleyvision.video import inspect_video
+            from volleyanalytics.video import inspect_video
 
             result = inspect_video(args.input).to_dict()
         elif args.command == "calibrate":
-            from volleyvision.calibration import calibrate_interactively
-            from volleyvision.provenance import require_video_permission
+            from volleyanalytics.calibration import calibrate_interactively
+            from volleyanalytics.provenance import require_video_permission
 
             require_video_permission(args.input, args.permission_record)
             if args.output.exists():
@@ -72,7 +72,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             result = {"saved": str(args.output)}
         else:
-            from volleyvision.baseline import run_baseline
+            from volleyanalytics.baseline import run_baseline
 
             result = run_baseline(
                 video=args.input,

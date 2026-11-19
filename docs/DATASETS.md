@@ -1,8 +1,17 @@
 # Dataset and checkpoint register
 
-Audit date: 21 October 2026. No third-party dataset, footage, or model checkpoint has
-been downloaded or used. Status remains **pending** until source/version evidence is
-sufficient; an advertised license alone is not a provenance audit.
+Audit date: 21 October 2026; permission update 19 November 2026. No third-party
+dataset, footage, or model checkpoint has been downloaded or used yet. An advertised
+license alone is not a provenance audit.
+
+## Author permission
+
+The author of `shukkkur/VolleyVision` has granted the developer permission to use the
+whole project, including its datasets, however the developer sees fit. Keep the
+written evidence of this grant privately under ignored `data/`. The grant covers the
+author's own rights; it cannot extend to footage or labels the author merged from
+other Roboflow Universe projects. That matters only for redistribution or commercial
+use, not for training and evaluating this showcase.
 
 ## Reference repository
 
@@ -10,8 +19,10 @@ sufficient; an advertised license alone is not a provenance audit.
 - README advertises CC BY-NC-ND 4.0; `LICENSE.md` contains GNU AGPL-3.0.
 - Evidence: README blob `b39acbb12823ea6b6cf7aeb2b212dc158ff1ac4e`;
   LICENSE.md blob `6bb5339778ba01632d750030cba42b79b48181fa`.
-- Decision: do not copy code or weights under unresolved conflicting terms. A dataset
-  license must be checked at its own source; the repository license does not resolve it.
+- Decision: **permitted** under the author's grant, which supersedes the conflicting
+  README/LICENSE terms. Credit the author when code or weights are reused. Upstream
+  checkpoints trained with Ultralytics remain subject to Ultralytics terms, and any
+  `.pt` file is loaded only after its hash is recorded in a model manifest.
 
 ## Ball candidate
 
@@ -21,32 +32,36 @@ sufficient; an advertised license alone is not a provenance audit.
   stretch preprocessing to 1024×768; advertised 80/10/10 split.
 - Provenance: description says multiple Universe datasets plus manual annotations;
   constituent source permissions and recording IDs are not yet established.
-- Decision: pending; no training/inference checkpoint clearance implied. Prefer
-  auditing original-resolution v1 for tiny-ball training, before selecting an export.
-- Attribution if cleared: project author Shukur Sabzaliev1/Shakhansho Sabzaliev,
+- Decision: **permitted** for training and evaluation under the author's grant. Record
+  the exact exported version and its SHA256 at download. Prefer the original-resolution
+  export for tiny-ball training. Source recording IDs are still unknown, so
+  match-level independence from our test footage cannot be shown; report this.
+- Attribution: project author Shukur Sabzaliev1/Shakhansho Sabzaliev,
   exact version URL, CC BY 4.0 link, modifications, and required constituent credits.
 
 ## Player candidate
 
 - Specification URL: https://universe.roboflow.com/shukur-sabzaliev-42xvj/players-dataset
-  was not accessible through the research tool.
+  could not be opened during the audit.
 - Matching candidate: https://universe.roboflow.com/actions-players/players-dataset
   advertises CC BY 4.0, `ball` and `player`, and a cloned source. Its overview lists
   206 images while its displayed trained version references 344; distinguish project
   images from processed version images when auditing an export.
-- Decision: pending identity/version/provenance confirmation. A pretrained person
-  detector is the initial baseline, so this dataset is not required in Week 1.
+- Decision: permitted if confirmed as the author's project (the author's grant covers
+  it); confirm the workspace identity and version. A pretrained person detector is the
+  initial baseline, so this dataset is not required in Week 1.
 
 ## Action candidate
 
 - Specification URL: https://universe.roboflow.com/shukur-sabzaliev-42xvj/volleyball-actions
-  was not accessible through the research tool.
+  could not be opened during the audit.
 - Matching candidate: https://universe.roboflow.com/actions-players/volleyball-actions
 - Inspected version: https://universe.roboflow.com/actions-players/volleyball-actions/dataset/5
 - Advertised CC BY 4.0; v5 original has 13,923 images and reports 13 class remappings.
   The project overview lists 15 source labels and several contributing datasets.
-- Decision: pending confirmation of project continuity, constituent rights, actual
-  export class names and mapping to `serve`, `set`, `spike`, `block`, `defense`.
+- Decision: use is permitted under the author's grant once the workspace is confirmed
+  as the author's. Still pending: the actual export class names and their mapping to
+  `serve`, `set`, `spike`, `block`, `defense`.
   Do not infer that `passing`, `digging`, or actor labels are semantically interchangeable.
 
 ## Code and weights
