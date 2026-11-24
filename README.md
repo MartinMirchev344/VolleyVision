@@ -57,7 +57,7 @@ install Ultralytics or fetch weights; the detector runtime is pinned separately 
 
 ```powershell
 .\.venv\Scripts\python.exe -m volleyanalytics calibrate --input data/matches/match-01/match-01.mp4 --permission-record data/matches/match-01/permission.json --output data/matches/match-01/court-v1.json --author reviewer
-.\.venv\Scripts\python.exe -m volleyanalytics baseline --input data/matches/match-01/match-01.mp4 --permission-record data/matches/match-01/permission.json --model-manifest data/player-model.json --task players --calibration data/matches/match-01/court-v1.json --start-sec 0 --end-sec 10 --track --device 0 --output outputs/player-trial-01
+.\.venv\Scripts\python.exe -m volleyanalytics baseline --input data/matches/match-01/match-01.mp4 --permission-record data/matches/match-01/permission.json --model-manifest data/models/players/model.json --task players --calibration data/matches/match-01/court-v1.json --config configs/players.yaml --start-sec 0 --end-sec 10 --track --device 0 --output outputs/player-trial-01
 ```
 
 Each baseline run writes an annotated MP4, detection CSV/JSONL, a frame ledger

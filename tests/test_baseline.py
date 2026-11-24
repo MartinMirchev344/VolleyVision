@@ -109,7 +109,7 @@ def test_tracked_player_baseline_runs_and_exports(tmp_path, device):
     )
     assert result["status"] == "complete"
     assert result["frames_processed"] == 5
-    assert result["tracking"] == "ByteTrack"
+    assert result["tracking"] == {"tracker": "bytetrack.yaml", "settings": None}
     assert (result["peak_cuda_memory_bytes"] is None) == (device == "cpu")
     frames = (output / "frames.jsonl").read_text(encoding="utf-8").splitlines()
     assert [json.loads(line)["frame_index"] for line in frames] == [0, 1, 2, 3, 4]

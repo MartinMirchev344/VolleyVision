@@ -1,0 +1,10 @@
+# ByteTrack tuned for a fixed volleyball camera (compare with Ultralytics bytetrack.yaml).
+# On a 15 s rally of the first development match this cut distinct on-court track IDs
+# from 124 to 49 (about 12-14 expected). Development footage only; not a held-out result.
+tracker_type: bytetrack
+track_high_thresh: 0.25
+track_low_thresh: 0.1
+new_track_thresh: 0.4 # default 0.25: fewer spurious tracks from flickering detections
+track_buffer: 90 # default 30: keep a lost player for 3 s at 30 FPS (occlusion at the net)
+match_thresh: 0.9 # default 0.8: accept lower box overlap for fast movement
+fuse_score: True

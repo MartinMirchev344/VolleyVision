@@ -1,0 +1,6 @@
+# Player detection and tracking. 1280 px keeps far-court players detectable at 720p
+# (640 px found a median of 7 of 12 on-court players per frame; 1280 px found 11-13).
+# A low confidence floor lets ByteTrack use weak detections to keep tracks alive.
+confidence: 0.1
+image_size: 1280
+tracker: bytetrack-volleyball.yaml

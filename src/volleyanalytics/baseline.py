@@ -18,6 +18,27 @@ from volleyanalytics.calibration import CourtCalibration
 from volleyanalytics.provenance import require_model_permission, require_video_permission
 from volleyanalytics.video import inspect_video, iter_frames
 
+BUILTIN_TRACKERS = ("bytetrack.yaml", "botsort.yaml")
+
+
+def _tracker_config(config: dict, config_path: Path) -> tuple[str, dict | None]:
+    """Tracker named in the run config: a built-in Ultralytics one or a YAML file beside it."""
+    name = str(config.get("tracker", "bytetrack.yaml"))
+    if name in BUILTIN_TRACKERS:
+        return name, None
+    path = (config_path.parent / name).resolve()
+    if not path.is_file() or path.suffix not in (".yaml", ".yml"):
+        raise ValueError(
+            "tracker must be bytetrack.yaml, botsort.yaml or a YAML file next to the config."
+        )
+    settings = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(settings, dict) or settings.get("tracker_type") not in (
+        "bytetrack",
+        "botsort",
+    ):
+        raise ValueError("Tracker YAML needs tracker_type bytetrack or botsort.")
+    return str(path), settings
+
 
 def run_baseline(
     *,
@@ -34,7 +55,7 @@ def run_baseline(
     device: str = "cpu",
 ) -> dict:
     if track and task != "players":
-        raise ValueError("ByteTrack is available only for the player trial.")
+        raise ValueError("Tracking is available only for the player trial.")
     if not all(isfinite(t) for t in (start_sec, end_sec)) or not 0 <= start_sec < end_sec:
         raise ValueError("Rally bounds must satisfy 0 <= start < end.")
     if end_sec - start_sec > 30:
@@ -48,6 +69,7 @@ def run_baseline(
     image_size = int(config["image_size"])
     if not isfinite(confidence) or not 0 < confidence < 1 or image_size < 32:
         raise ValueError("Confidence must be in (0, 1), and image_size at least 32.")
+    tracker, tracker_settings = _tracker_config(config, config_path) if track else (None, None)
     info = inspect_video(video)
     if end_sec > info.duration_sec + 1 / info.fps:
         raise ValueError("Rally end exceeds the reported video duration.")
@@ -99,7 +121,7 @@ def run_baseline(
         "configuration": config,
         "device": device,
         "versions": {name: version(name) for name in ("torch", "ultralytics", "opencv-python")},
-        "tracking": "ByteTrack" if track else None,
+        "tracking": {"tracker": tracker, "settings": tracker_settings} if track else None,
         "calibration": asdict(calibration) if calibration else None,
         "limitations": [
             "Frame predictions are not action events or confirmed points.",
@@ -158,7 +180,7 @@ def run_baseline(
                     "classes": class_ids,
                 }
                 if track:
-                    result = model.track(**arguments, tracker="bytetrack.yaml", persist=True)[0]
+                    result = model.track(**arguments, tracker=tracker, persist=True)[0]
                 else:
                     result = model.predict(**arguments)[0]
                 canvas = frame.image.copy()

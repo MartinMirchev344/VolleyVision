@@ -47,7 +47,11 @@ def build_parser() -> argparse.ArgumentParser:
     baseline.add_argument("--calibration", type=Path)
     baseline.add_argument("--start-sec", type=float, required=True)
     baseline.add_argument("--end-sec", type=float, required=True)
-    baseline.add_argument("--track", action="store_true", help="Use ByteTrack for the player trial")
+    baseline.add_argument(
+        "--track",
+        action="store_true",
+        help="Track players (tracker set in --config, default ByteTrack)",
+    )
     baseline.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
     return parser
 
