@@ -4,6 +4,12 @@ Store private recordings, extracted frames, annotations, and a video inventory l
 
 Store generated videos, tracking exports, and heatmaps in the ignored `outputs/` directory. Common recording formats and model weights are also ignored.
 
+## Layout
+
+- `matches/<match>/`: one folder per match recording, holding the video, its permission record and its court calibrations. This is the default `VOLLEYANALYTICS_STORAGE_ROOT`; `import-video` registers videos here in place.
+- `datasets/<name>/`: upstream VolleyVision datasets, one folder per exact exported version.
+- `postgres/`: the portable local database cluster.
+
 ## Inventory convention
 
 When footage is available, maintain a private, ignored CSV such as `data/video-inventory.csv` with:
@@ -18,7 +24,7 @@ No recordings or inventory are supplied. Public availability alone does not esta
 
 ## Private permission and model manifests
 
-Calibration and inference require `--permission-record data/permission.json`. After
+Calibration and inference require `--permission-record data/matches/match-01/permission.json`. After
 inspecting the video hash, create an ignored JSON record with `recording_id`,
 `sha256`, `owner`, `permission_evidence`, `allowed_uses`, `split` (`development`,
 `validation`, or `test`), and `processing_permitted: true` only when established.

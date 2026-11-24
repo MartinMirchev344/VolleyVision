@@ -78,8 +78,8 @@ New-Item -ItemType Directory -Force outputs | Out-Null
 ```
 
 Only set `TEST_DATABASE_URL` to a dedicated test database: integration checks create
-and remove an isolated schema there. The bootstrap migration has no feature tables.
-After use stop the portable instance with:
+and remove an isolated schema there. They also check that the ORM models match the
+migrations. After use stop the portable instance with:
 
 ```powershell
 .\.tools\postgresql\pgsql\bin\pg_ctl.exe -D data/postgres -m fast -w stop

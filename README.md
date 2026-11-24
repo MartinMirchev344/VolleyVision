@@ -9,8 +9,9 @@ metadata, predictions, and reviews.
 ## Current milestone
 
 Week 1 provides video inspection, normalized manual polygon calibration,
-permission-checked independent detector trials, environment diagnostics, and a
-PostgreSQL/Alembic bootstrap. This is not yet the integrated showcase pipeline.
+permission-checked independent detector trials, environment diagnostics, PostgreSQL
+with Alembic migrations, and source-video registration. This is not yet the
+integrated showcase pipeline.
 No real footage, model weights, training results, or volleyball accuracy measurements
 are included. Ball motion tracking, temporal action events, and scoring review arrive
 in later milestones.
@@ -26,7 +27,15 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --no-deps -e .
 .\.venv\Scripts\python.exe -m volleyanalytics --help
 .\.venv\Scripts\python.exe -m volleyanalytics doctor
-.\.venv\Scripts\python.exe -m volleyanalytics inspect --input data/rally.mp4
+.\.venv\Scripts\python.exe -m volleyanalytics inspect --input data/matches/match-01/match-01.mp4
+```
+
+Keep each match recording under `data/matches/<match>/` (ignored by Git). With
+`DATABASE_URL` and `VOLLEYANALYTICS_STORAGE_ROOT` set (see [setup](docs/setup.md))
+and migrations applied, register it in PostgreSQL without copying the file:
+
+```powershell
+.\.venv\Scripts\python.exe -m volleyanalytics import-video --file data/matches/match-01/match-01.mp4
 ```
 
 Inspection prints the content hash needed for a private footage permission record.
@@ -37,8 +46,8 @@ install Ultralytics or fetch weights; the detector runtime is pinned separately 
 `requirements-models.txt` (see [setup](docs/setup.md)).
 
 ```powershell
-.\.venv\Scripts\python.exe -m volleyanalytics calibrate --input data/rally.mp4 --permission-record data/permission.json --output data/court-v1.json --author reviewer
-.\.venv\Scripts\python.exe -m volleyanalytics baseline --input data/rally.mp4 --permission-record data/permission.json --model-manifest data/player-model.json --task players --calibration data/court-v1.json --start-sec 0 --end-sec 10 --track --device 0 --output outputs/player-trial-01
+.\.venv\Scripts\python.exe -m volleyanalytics calibrate --input data/matches/match-01/match-01.mp4 --permission-record data/matches/match-01/permission.json --output data/matches/match-01/court-v1.json --author reviewer
+.\.venv\Scripts\python.exe -m volleyanalytics baseline --input data/matches/match-01/match-01.mp4 --permission-record data/matches/match-01/permission.json --model-manifest data/player-model.json --task players --calibration data/matches/match-01/court-v1.json --start-sec 0 --end-sec 10 --track --device 0 --output outputs/player-trial-01
 ```
 
 Each baseline run writes an annotated MP4, detection CSV/JSONL, a frame ledger

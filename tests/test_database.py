@@ -4,10 +4,13 @@ from uuid import uuid4
 
 import pytest
 from alembic import command
+from alembic.autogenerate import compare_metadata
 from alembic.config import Config
+from alembic.runtime.migration import MigrationContext
 from sqlalchemy import create_engine, text
 
-from volleyanalytics.db import database_url
+import volleyanalytics.models  # noqa: F401  (registers feature tables)
+from volleyanalytics.db import Base, database_url
 
 
 @pytest.mark.integration
@@ -26,10 +29,12 @@ def test_migration_roundtrip_and_persistence(monkeypatch):
             config.attributes["connection"] = connection
             command.upgrade(config, "head")
             assert (
-                connection.scalar(text("SELECT version_num FROM alembic_version"))
-                == "0001_bootstrap"
+                connection.scalar(text("SELECT version_num FROM alembic_version")) == "0002_videos"
             )
+            # The ORM models and the migrations must describe the same schema.
+            assert compare_metadata(MigrationContext.configure(connection), Base.metadata) == []
             command.downgrade(config, "base")
+            assert connection.scalar(text("SELECT to_regclass('videos')")) is None
             assert connection.scalar(text("SELECT count(*) FROM alembic_version")) == 0
             command.upgrade(config, "head")
             command.upgrade(config, "head")  # Rerun is harmless.
@@ -37,7 +42,7 @@ def test_migration_roundtrip_and_persistence(monkeypatch):
         with engine.connect() as connection:
             assert (
                 connection.scalar(text(f'SELECT version_num FROM "{schema}".alembic_version'))
-                == "0001_bootstrap"
+                == "0002_videos"
             )
     finally:
         with engine.begin() as connection:

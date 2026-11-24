@@ -1,10 +1,12 @@
 """PostgreSQL bootstrap; feature models arrive with their first migration."""
 
 import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.engine import make_url
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Session
 
 
 class Base(DeclarativeBase):
@@ -30,6 +32,17 @@ def database_url(variable: str = "DATABASE_URL") -> str:
     if parsed.drivername != "postgresql+psycopg":
         raise ValueError(f"{variable} must use the postgresql+psycopg driver.")
     return value
+
+
+@contextmanager
+def session_scope(variable: str = "DATABASE_URL") -> Iterator[Session]:
+    """One transaction: committed on success, rolled back on any error."""
+    engine = create_engine(database_url(variable), connect_args={"connect_timeout": 5})
+    try:
+        with Session(engine) as session, session.begin():
+            yield session
+    finally:
+        engine.dispose()
 
 
 def check_database() -> dict:

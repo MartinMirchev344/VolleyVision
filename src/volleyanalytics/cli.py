@@ -13,6 +13,11 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("db-check", help="Check PostgreSQL using DATABASE_URL")
     inspect = commands.add_parser("inspect", help="Inspect a local video's metadata and SHA256")
     inspect.add_argument("--input", type=Path, required=True)
+    register = commands.add_parser(
+        "import-video",
+        help="Register a video inside VOLLEYANALYTICS_STORAGE_ROOT in PostgreSQL (no copy)",
+    )
+    register.add_argument("--file", type=Path, required=True)
     calibrate = commands.add_parser("calibrate", help="Click court and playable-region polygons")
     calibrate.add_argument("--input", type=Path, required=True)
     calibrate.add_argument("--permission-record", type=Path, required=True)
@@ -55,6 +60,14 @@ def main(argv: list[str] | None = None) -> int:
             from volleyanalytics.video import inspect_video
 
             result = inspect_video(args.input).to_dict()
+        elif args.command == "import-video":
+            from volleyanalytics.db import session_scope
+            from volleyanalytics.ingest import import_video
+            from volleyanalytics.storage import LocalStorage
+
+            storage = LocalStorage.from_environment()
+            with session_scope() as session:
+                result = import_video(session, storage, args.file)
         elif args.command == "calibrate":
             from volleyanalytics.calibration import calibrate_interactively
             from volleyanalytics.provenance import require_video_permission

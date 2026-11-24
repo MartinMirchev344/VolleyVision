@@ -3,6 +3,7 @@
 from alembic import context
 from sqlalchemy import create_engine, pool
 
+import volleyanalytics.models  # noqa: F401  (registers feature tables on Base.metadata)
 from volleyanalytics.db import Base, database_url
 
 target_metadata = Base.metadata

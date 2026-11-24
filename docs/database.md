@@ -1,15 +1,22 @@
 # PostgreSQL and artifact storage
 
-Use PostgreSQL with synchronous SQLAlchemy 2.x, psycopg 3 and Alembic. The bootstrap
-revision establishes migration history only; no feature tables exist yet. Database
-credentials come from environment variables. No SQLite fallback is used to stand
-in for PostgreSQL tests.
+Use PostgreSQL with synchronous SQLAlchemy 2.x, psycopg 3 and Alembic. ORM models live
+in `src/volleyanalytics/models.py`; each table arrives through its own migration.
+Database credentials come from environment variables. No SQLite fallback is used to
+stand in for PostgreSQL tests.
 
-## First feature migration (Weeks 2–3)
+## Implemented tables
+
+| Revision | Table | Contents and constraints |
+|---|---|---|
+| `0002_videos` | videos | UUID PK; original filename; unique storage key and SHA256; positive byte size, width/height, FPS, frame count and duration; duration provenance; timezone-aware creation time |
+
+A match reference is added to `videos` when the `matches` table arrives.
+
+## Next feature migrations (Weeks 2–3)
 
 | Entity | Proposed contents and constraints |
 |---|---|
-| videos | UUID PK; optional future match reference; filename, storage key, SHA256, byte size, positive FPS/width/height, nonnegative frame count/duration; UTC creation time |
 | court_calibrations | UUID PK; video FK; normalized court/playable polygons and tolerance, source frame and dimensions, mode/version/author; unique video+version; immutable versions |
 | processing_runs | UUID PK; video and calibration references; model IDs/hashes, configuration snapshot, status, UTC start/end, hardware/performance and error details |
 | player_tracks | UUID PK; run FK; anonymous integer track ID; first/last frame, eligibility; unique run+track_id; optional human roster mapping later |
@@ -35,14 +42,19 @@ point counters independently of the reviewed records.
 
 Raw/annotated videos live in ignored local folders by default. Store a storage key,
 content hash, size and metadata in PostgreSQL; no raw MP4 bytea or frame-image blobs.
-`VOLLEYANALYTICS_STORAGE_ROOT` will be consumed by ingestion when that feature arrives;
-Week 1 commands instead take explicit local input/output paths.
+`VOLLEYANALYTICS_STORAGE_ROOT` (default `./data/matches`) is the source-video root.
+`import-video` registers a file **in place** inside that root, without copying large
+match recordings. Its storage key is the POSIX path relative to the root. Re-importing
+identical content returns the existing row. A changed file under an already registered
+key, or identical content under a second key, is refused. The other commands still take
+explicit local input/output paths.
 
-At ingestion, introduce a minimal `StorageBackend` with read/write/existence/delete
-operations and a local implementation. Resolve relative keys inside its configured
-root and reject path traversal. Object storage can implement the same boundary later;
-do not add S3 or MinIO now. Keep source artifacts immutable and register successful
-output artifacts only after closing the file and computing its checksum.
+`src/volleyanalytics/storage.py` defines a minimal `StorageBackend` (existence, read,
+size) and a `LocalStorage` implementation. Keys are validated as relative, with no
+empty, `.` or `..` parts, and must resolve inside the root. Object storage can
+implement the same boundary later; do not add S3 or MinIO now. Write and delete
+operations are added with output artifacts. Keep source artifacts immutable, and
+register output artifacts only after closing the file and computing its checksum.
 
 Database deletion must not silently orphan or destroy video files. Initially reject
 deleting referenced records until an explicit retention/deletion workflow exists.
