@@ -10,8 +10,8 @@ metadata, predictions, and reviews.
 
 Week 1 provides video inspection, normalized manual polygon calibration,
 permission-checked independent detector trials, environment diagnostics, PostgreSQL
-with Alembic migrations, and source-video registration. This is not yet the
-integrated showcase pipeline.
+with Alembic migrations, source-video registration, and the match statistics
+database. This is not yet the integrated showcase pipeline.
 No real footage, model weights, training results, or volleyball accuracy measurements
 are included. Ball motion tracking, temporal action events, and scoring review arrive
 in later milestones.
@@ -36,6 +36,16 @@ and migrations applied, register it in PostgreSQL without copying the file:
 
 ```powershell
 .\.venv\Scripts\python.exe -m volleyanalytics import-video --file data/matches/match-01/match-01.mp4
+```
+
+Match statistics live in PostgreSQL as rallies and graded touches; the box score
+(per-player points, serve, reception, attack and block, team totals, set scores and
+partials) is computed from them on request. Figures from unreviewed AI records are
+labelled as estimates. See [database design](docs/database.md#statistics).
+
+```powershell
+.\.venv\Scripts\python.exe -m volleyanalytics stats --match-id <match-uuid>
+.\.venv\Scripts\python.exe -m volleyanalytics stats --match-id <match-uuid> --reviewed-only --format json
 ```
 
 Inspection prints the content hash needed for a private footage permission record.

@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from uuid import UUID
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -18,6 +19,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Register a video inside VOLLEYANALYTICS_STORAGE_ROOT in PostgreSQL (no copy)",
     )
     register.add_argument("--file", type=Path, required=True)
+    stats = commands.add_parser("stats", help="Print a match box score computed in PostgreSQL")
+    stats.add_argument("--match-id", type=UUID, required=True)
+    stats.add_argument(
+        "--reviewed-only", action="store_true", help="Count only confirmed/corrected records"
+    )
+    stats.add_argument("--format", choices=("text", "json"), default="text")
     calibrate = commands.add_parser("calibrate", help="Click court and playable-region polygons")
     calibrate.add_argument("--input", type=Path, required=True)
     calibrate.add_argument("--permission-record", type=Path, required=True)
@@ -68,6 +75,15 @@ def main(argv: list[str] | None = None) -> int:
             storage = LocalStorage.from_environment()
             with session_scope() as session:
                 result = import_video(session, storage, args.file)
+        elif args.command == "stats":
+            from volleyanalytics.db import session_scope
+            from volleyanalytics.stats import match_report, render_text
+
+            with session_scope() as session:
+                result = match_report(session, args.match_id, args.reviewed_only)
+            if args.format == "text":
+                print(render_text(result))
+                return 0
         elif args.command == "calibrate":
             from volleyanalytics.calibration import calibrate_interactively
             from volleyanalytics.provenance import require_video_permission

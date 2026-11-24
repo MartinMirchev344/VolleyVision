@@ -29,10 +29,22 @@ def test_migration_roundtrip_and_persistence(monkeypatch):
             config.attributes["connection"] = connection
             command.upgrade(config, "head")
             assert (
-                connection.scalar(text("SELECT version_num FROM alembic_version")) == "0002_videos"
+                connection.scalar(text("SELECT version_num FROM alembic_version"))
+                == "0003_match_stats"
             )
             # The ORM models and the migrations must describe the same schema.
             assert compare_metadata(MigrationContext.configure(connection), Base.metadata) == []
+            command.downgrade(config, "0002_videos")
+            assert connection.scalar(text("SELECT to_regclass('touches')")) is None
+            assert "match_id" not in {
+                row[0]
+                for row in connection.execute(
+                    text(
+                        "SELECT column_name FROM information_schema.columns "
+                        "WHERE table_schema = current_schema() AND table_name = 'videos'"
+                    )
+                )
+            }
             command.downgrade(config, "base")
             assert connection.scalar(text("SELECT to_regclass('videos')")) is None
             assert connection.scalar(text("SELECT count(*) FROM alembic_version")) == 0
@@ -42,7 +54,7 @@ def test_migration_roundtrip_and_persistence(monkeypatch):
         with engine.connect() as connection:
             assert (
                 connection.scalar(text(f'SELECT version_num FROM "{schema}".alembic_version'))
-                == "0002_videos"
+                == "0003_match_stats"
             )
     finally:
         with engine.begin() as connection:

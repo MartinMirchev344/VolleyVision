@@ -1,16 +1,12 @@
-import os
 from pathlib import Path
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import cv2
 import numpy as np
 import pytest
-from alembic import command
-from alembic.config import Config
-from sqlalchemy import create_engine, func, select, text
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from volleyanalytics.db import database_url
 from volleyanalytics.ingest import import_video
 from volleyanalytics.models import Video
 from volleyanalytics.storage import LocalStorage
@@ -22,33 +18,6 @@ def _write_video(path: Path, shade: int) -> None:
     for index in range(10):
         writer.write(np.full((120, 160, 3), (shade + index) % 256, dtype=np.uint8))
     writer.release()
-
-
-@pytest.fixture
-def database(monkeypatch):
-    """A migrated, disposable schema in the dedicated test database."""
-    if not os.environ.get("TEST_DATABASE_URL"):
-        pytest.skip("Set TEST_DATABASE_URL to a dedicated disposable PostgreSQL database")
-    url = database_url("TEST_DATABASE_URL")
-    monkeypatch.setenv("DATABASE_URL", url)
-    schema = "vv_test_" + uuid4().hex
-    admin = create_engine(url, connect_args={"connect_timeout": 5})
-    with admin.begin() as connection:
-        connection.execute(text(f'CREATE SCHEMA "{schema}"'))
-    engine = create_engine(
-        url, connect_args={"connect_timeout": 5, "options": f"-csearch_path={schema}"}
-    )
-    try:
-        config = Config(str(Path(__file__).resolve().parents[1] / "alembic.ini"))
-        with engine.begin() as connection:
-            config.attributes["connection"] = connection
-            command.upgrade(config, "head")
-        yield engine
-    finally:
-        engine.dispose()
-        with admin.begin() as connection:
-            connection.execute(text(f'DROP SCHEMA IF EXISTS "{schema}" CASCADE'))
-        admin.dispose()
 
 
 @pytest.mark.integration
