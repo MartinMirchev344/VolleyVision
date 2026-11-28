@@ -120,6 +120,8 @@ def export_batch(
     calibration_from_sec: float | None = None,
     calibration_until_sec: float | None = None,
     only_split: str | None = None,
+    side: str | None = None,
+    net_tolerance_m: float = 0.5,
     seed: int = 1,
     device: str = "cpu",
 ) -> dict:
@@ -131,6 +133,10 @@ def export_batch(
         raise ValueError("min_confidence must be in (0, 1) and image_size at least 32.")
     if only_split not in (None, "train", "test"):
         raise ValueError("only_split must be train or test.")
+    if side not in (None, "near", "far"):
+        raise ValueError("side must be near or far.")
+    if side and calibration_path is None:
+        raise ValueError("Keeping one side of the court needs a court calibration.")
     if output.exists():
         raise ValueError("Use a new batch directory; earlier batches stay unchanged.")
     info = inspect_video(video)
@@ -188,6 +194,15 @@ def export_batch(
                 bbox = [float(v) for v in box.xyxy[0].tolist()]
                 if use_court and calibration.classify(bbox, info.width, info.height) == "excluded":
                     continue
+                if (
+                    use_court
+                    and side
+                    and (
+                        calibration.court_side(bbox, info.width, info.height, net_tolerance_m)
+                        != side
+                    )
+                ):
+                    continue
                 boxes.append(
                     rectangle_result(bbox, info.width, info.height, "player", float(box.conf))
                 )
@@ -224,6 +239,8 @@ def export_batch(
             "calibration_from_sec": calibration_from_sec,
             "calibration_until_sec": calibration_until_sec,
             "only_split": only_split,
+            "side": side,
+            "net_tolerance_m": net_tolerance_m if side else None,
         },
         "frames": len(tasks),
         "train_frames": sum(t["data"]["split"] == "train" for t in tasks),

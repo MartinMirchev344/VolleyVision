@@ -103,6 +103,11 @@ Export frames pre-filled with the player model's boxes. Frames are spread evenly
 the recording; `--test-from-sec` marks later frames as test frames, and `--only-split`
 exports one split. A court calibration (valid between `--calibration-from-sec` and
 `--calibration-until-sec`) drops pre-filled boxes off the court.
+`--side near` keeps only players on the near half: the calibration's four court corners
+give a perspective transform to court metres, and a footpoint counts as near up to
+`--net-tolerance-m` (default 0.5 m) past the centre line. Use it to track one team when
+the camera stands behind that team's end line; move the camera and add a calibration
+whenever the teams switch sides.
 
 ```powershell
 .\.venv\Scripts\python.exe -m volleyanalytics label-export --input <video> --permission-record <permission.json> --model-manifest data/models/upstream-players/model.json --output data/labeling/test-01 --count 150 --test-from-sec 3140 --only-split test --calibration <court.json> --calibration-from-sec 3140 --device 0

@@ -14,6 +14,24 @@ from volleyanalytics.video import file_sha256, reference_frame
 
 Point = tuple[float, float]
 Mode = Literal["strict_court", "court_plus_free_zone"]
+Side = Literal["near", "far"]
+
+COURT_WIDTH_M, COURT_LENGTH_M = 9.0, 18.0
+CENTRE_LINE_M = COURT_LENGTH_M / 2
+
+
+def ordered_corners(points: list[Point]) -> np.ndarray:
+    """Court corners as near-left, near-right, far-right, far-left.
+
+    Assumes a camera behind an end line, so the near end line is lower in the image.
+    """
+    corners = np.asarray(points, dtype=np.float64)
+    if corners.shape != (4, 2):
+        raise ValueError("Court sides need a court polygon with exactly four corners.")
+    by_height = corners[np.argsort(corners[:, 1])]
+    far = by_height[:2][np.argsort(by_height[:2, 0])]
+    near = by_height[2:][np.argsort(by_height[2:, 0])]
+    return np.array([near[0], near[1], far[1], far[0]])
 
 
 def _cross(a: Point, b: Point, c: Point) -> float:
@@ -96,6 +114,47 @@ class CourtCalibration:
             raise ValueError("Frame aspect ratio changed; recalibrate the video.")
         points = self.court_polygon if self.mode == "strict_court" else self.playable_polygon
         return np.asarray(points, dtype=np.float32) * (width, height)
+
+    def court_transform(self, width: int, height: int) -> np.ndarray:
+        """Perspective transform from image pixels to court metres on the floor plane.
+
+        x runs across the court (0-9 m from the near-left sideline); y runs along it
+        (0 m at the near end line, 9 m at the centre line, 18 m at the far end line).
+        Lens distortion is ignored, so positions far from the court corners are estimates.
+        """
+        self.polygon_pixels(width, height)  # Validates the frame size.
+        corners = ordered_corners(self.court_polygon) * (width, height)
+        court = [[0, 0], [COURT_WIDTH_M, 0], [COURT_WIDTH_M, COURT_LENGTH_M], [0, COURT_LENGTH_M]]
+        return cv2.getPerspectiveTransform(corners.astype(np.float32), np.float32(court))
+
+    def court_position(
+        self, bbox: list[float], width: int, height: int
+    ) -> tuple[float, float] | None:
+        """A box's footpoint in court metres, or None if it lies beyond the horizon."""
+        x1, y1, x2, y2 = bbox
+        transform = self.court_transform(width, height)
+        point = transform @ np.array([(x1 + x2) / 2, y2, 1.0])
+        centre = ordered_corners(self.court_polygon).mean(axis=0) * (width, height)
+        reference = transform @ np.array([centre[0], centre[1], 1.0])
+        if point[2] * reference[2] <= 0:
+            return None  # Above the floor's horizon: not a point on the court plane.
+        return float(point[0] / point[2]), float(point[1] / point[2])
+
+    def court_side(
+        self, bbox: list[float], width: int, height: int, net_tolerance_m: float = 0.5
+    ) -> Side:
+        """Which half a player stands in. Feet up to `net_tolerance_m` past the centre line
+        still count as near, so near-side players at the net (or jumping) are kept."""
+        position = self.court_position(bbox, width, height)
+        if position is None:
+            return "far"
+        return "near" if position[1] < CENTRE_LINE_M + net_tolerance_m else "far"
+
+    def centre_line_pixels(self, width: int, height: int) -> np.ndarray:
+        """The centre line's two sideline ends in image pixels."""
+        inverse = np.linalg.inv(self.court_transform(width, height))
+        ends = np.float32([[[0, CENTRE_LINE_M]], [[COURT_WIDTH_M, CENTRE_LINE_M]]])
+        return cv2.perspectiveTransform(ends, inverse.astype(np.float32)).reshape(2, 2)
 
     def classify(self, bbox: list[float], width: int, height: int) -> str:
         if len(bbox) != 4 or not all(isfinite(v) for v in bbox):

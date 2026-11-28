@@ -150,3 +150,14 @@ def test_evaluate_writes_a_report(tmp_path):
     assert json.loads(report_path.read_text())["model_id"] == "random"
     with pytest.raises(ValueError, match="new report"):
         evaluate(labels=dataset, model_manifest=manifest, task="players", output=report_path)
+
+
+def test_one_side_needs_a_court_calibration(tmp_path):
+    with pytest.raises(ValueError, match="court calibration"):
+        evaluate(
+            labels=tmp_path,
+            model_manifest=tmp_path / "model.json",
+            task="players",
+            output=tmp_path / "report.json",
+            side="near",
+        )

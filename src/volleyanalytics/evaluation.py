@@ -250,6 +250,8 @@ def evaluate(
     threshold: float = 0.3,
     ball_distance: float = 10.0,
     calibration_path: Path | None = None,
+    side: str | None = None,
+    net_tolerance_m: float = 0.5,
     split: str = "test",
     device: str = "cpu",
 ) -> dict:
@@ -262,6 +264,10 @@ def evaluate(
         raise ValueError("Evaluation supports the players and ball models.")
     if not 0 < threshold < 1 or ball_distance <= 0:
         raise ValueError("threshold must be in (0, 1) and ball_distance positive.")
+    if side not in (None, "near", "far"):
+        raise ValueError("side must be near or far.")
+    if side and calibration_path is None:
+        raise ValueError("Scoring one side of the court needs a court calibration.")
     if output.exists():
         raise ValueError("Use a new report path; earlier reports stay unchanged.")
     model_record, checkpoint = require_model_permission(model_manifest, task)
@@ -296,6 +302,8 @@ def evaluate(
             on_court = (
                 calibration.classify(bbox, width, height) != "excluded" if calibration else True
             )
+            if on_court and side:
+                on_court = calibration.court_side(bbox, width, height, net_tolerance_m) == side
             frame["predictions"].append(
                 {
                     "class": class_map[model.names[int(box.cls.item())]],
@@ -322,6 +330,8 @@ def evaluate(
             {**f, "predictions": [p for p in f["predictions"] if p["on_court"]]} for f in frames
         ]
         report["detector_with_court_filter"] = summarise(filtered, cls, mode, limit, threshold)
+        report["detector_with_court_filter"]["side"] = side
+        report["detector_with_court_filter"]["net_tolerance_m"] = net_tolerance_m if side else None
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return report

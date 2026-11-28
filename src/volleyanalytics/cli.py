@@ -70,6 +70,10 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_argument("--calibration-from-sec", type=float, help="Calibration valid from")
     export.add_argument("--calibration-until-sec", type=float, help="Calibration valid until")
     export.add_argument("--only-split", choices=("train", "test"), help="Export one split")
+    export.add_argument(
+        "--side", choices=("near", "far"), help="Pre-fill only players on this half of the court"
+    )
+    export.add_argument("--net-tolerance-m", type=float, default=0.5)
     export.add_argument("--seed", type=int, default=1)
     export.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
     evaluate = commands.add_parser(
@@ -86,6 +90,10 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--threshold", type=float, default=0.3)
     evaluate.add_argument("--ball-distance", type=float, default=10.0, help="Pixels")
     evaluate.add_argument("--calibration", type=Path, help="Also score with the court filter")
+    evaluate.add_argument(
+        "--side", choices=("near", "far"), help="Score only players on this half of the court"
+    )
+    evaluate.add_argument("--net-tolerance-m", type=float, default=0.5)
     evaluate.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
     studio = commands.add_parser(
         "label-studio", help="Start the local Label Studio (localhost only, no telemetry)"
@@ -138,6 +146,8 @@ def main(argv: list[str] | None = None) -> int:
                 threshold=args.threshold,
                 ball_distance=args.ball_distance,
                 calibration_path=args.calibration,
+                side=args.side,
+                net_tolerance_m=args.net_tolerance_m,
                 split=args.split,
                 device=args.device,
             )
@@ -161,6 +171,8 @@ def main(argv: list[str] | None = None) -> int:
                 calibration_from_sec=args.calibration_from_sec,
                 calibration_until_sec=args.calibration_until_sec,
                 only_split=args.only_split,
+                side=args.side,
+                net_tolerance_m=args.net_tolerance_m,
                 seed=args.seed,
                 device=args.device,
             )

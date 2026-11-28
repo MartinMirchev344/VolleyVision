@@ -137,6 +137,16 @@ def test_export_writes_exact_frames_split_by_time(tmp_path):
         t["data"]["frame_index"] for t in tasks if t["data"]["split"] == "test"
     }
     assert len(list((tmp_path / "test-01" / "images").iterdir())) == 2
+    with pytest.raises(ValueError, match="court calibration"):
+        export_batch(
+            video=video,
+            permission=permission,
+            model_manifest=manifest,
+            output=tmp_path / "near-01",
+            count=8,
+            test_from_sec=3.0,
+            side="near",
+        )
     with pytest.raises(ValueError, match="new batch"):
         export_batch(
             video=video,

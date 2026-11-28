@@ -56,7 +56,8 @@ tool; see [labelling](docs/setup.md#labelling-label-studio).
 or a YOLO-format dataset such as a VolleyVision export. Players match by box overlap
 (IoU ≥ 0.5) and the ball by centre distance. The JSON report gives precision, recall,
 AP50, player recall by box height (far-court players are small), and the frames with
-the most errors; `--calibration` adds a second score with the court filter applied.
+the most errors; `--calibration` adds a second score with the court filter applied, and
+`--side near` limits that score to players on the near half (one team).
 
 ```powershell
 .\.venv\Scripts\python.exe -m volleyanalytics evaluate --labels data/labeling/test-01/export.json --model-manifest data/models/upstream-players/model.json --task players --calibration <court.json> --device 0 --output outputs/eval/players-upstream.json
