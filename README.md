@@ -48,6 +48,10 @@ labelled as estimates. See [database design](docs/database.md#statistics).
 .\.venv\Scripts\python.exe -m volleyanalytics stats --match-id <match-uuid> --reviewed-only --format json
 ```
 
+Model quality is measured on frames from the match labelled by a person. `label-export`
+prepares frames pre-filled with model boxes and `label-studio` starts a local labelling
+tool; see [labelling](docs/setup.md#labelling-label-studio).
+
 Inspection prints the content hash needed for a private footage permission record.
 Calibration and inference require that record. Detector inference also requires a
 trusted local checkpoint and an explicitly reviewed model manifest; see

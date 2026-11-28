@@ -53,6 +53,29 @@ def build_parser() -> argparse.ArgumentParser:
         help="Track players (tracker set in --config, default ByteTrack)",
     )
     baseline.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
+    export = commands.add_parser(
+        "label-export", help="Export frames pre-filled with player boxes for Label Studio"
+    )
+    export.add_argument("--input", type=Path, required=True)
+    export.add_argument("--permission-record", type=Path, required=True)
+    export.add_argument("--model-manifest", type=Path, required=True)
+    export.add_argument("--output", type=Path, required=True, help="New batch folder")
+    export.add_argument("--count", type=int, default=150)
+    export.add_argument(
+        "--test-from-sec", type=float, required=True, help="Frames from here on are test frames"
+    )
+    export.add_argument("--image-size", type=int, default=1280)
+    export.add_argument("--min-confidence", type=float, default=0.3)
+    export.add_argument("--calibration", type=Path, help="Drop pre-filled boxes off the court")
+    export.add_argument("--calibration-from-sec", type=float, help="Calibration valid from")
+    export.add_argument("--calibration-until-sec", type=float, help="Calibration valid until")
+    export.add_argument("--only-split", choices=("train", "test"), help="Export one split")
+    export.add_argument("--seed", type=int, default=1)
+    export.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
+    studio = commands.add_parser(
+        "label-studio", help="Start the local Label Studio (localhost only, no telemetry)"
+    )
+    studio.add_argument("--port", type=int, default=8080)
     return parser
 
 
@@ -88,6 +111,29 @@ def main(argv: list[str] | None = None) -> int:
             if args.format == "text":
                 print(render_text(result))
                 return 0
+        elif args.command == "label-studio":
+            from volleyanalytics.labeling import start_label_studio
+
+            return start_label_studio(args.port)
+        elif args.command == "label-export":
+            from volleyanalytics.labeling import export_batch
+
+            result = export_batch(
+                video=args.input,
+                permission=args.permission_record,
+                model_manifest=args.model_manifest,
+                output=args.output,
+                count=args.count,
+                test_from_sec=args.test_from_sec,
+                image_size=args.image_size,
+                min_confidence=args.min_confidence,
+                calibration_path=args.calibration,
+                calibration_from_sec=args.calibration_from_sec,
+                calibration_until_sec=args.calibration_until_sec,
+                only_split=args.only_split,
+                seed=args.seed,
+                device=args.device,
+            )
         elif args.command == "calibrate":
             from volleyanalytics.calibration import calibrate_interactively
             from volleyanalytics.provenance import require_video_permission

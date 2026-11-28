@@ -88,3 +88,41 @@ migrations. After use stop the portable instance with:
 Use `docker compose stop postgres` for Compose. Keep persistent volumes/cluster data
 unless deliberately retiring the database. `.env.example` contains placeholders,
 not the credentials used by the local instance.
+
+## Labelling (Label Studio)
+
+Label Studio Community 1.23.2 (Apache-2.0) runs in its own environment so its
+dependencies cannot affect the project. Install it once:
+
+```powershell
+.\.tools\python\cpython-3.11.17-windows-x86_64-none\python.exe -m venv .tools\label-studio-venv
+.\.tools\label-studio-venv\Scripts\python.exe -m pip install label-studio==1.23.2
+```
+
+Export frames pre-filled with the player model's boxes. Frames are spread evenly over
+the recording; `--test-from-sec` marks later frames as test frames, and `--only-split`
+exports one split. A court calibration (valid between `--calibration-from-sec` and
+`--calibration-until-sec`) drops pre-filled boxes off the court.
+
+```powershell
+.\.venv\Scripts\python.exe -m volleyanalytics label-export --input <video> --permission-record <permission.json> --model-manifest data/models/upstream-players/model.json --output data/labeling/test-01 --count 150 --test-from-sec 3140 --only-split test --calibration <court.json> --calibration-from-sec 3140 --device 0
+```
+
+Start Label Studio with `.\.venv\Scripts\python.exe -m volleyanalytics label-studio`.
+It listens on http://127.0.0.1:8080 only, keeps its database in `data/label-studio`,
+serves frames from `data/labeling`, and has crash reporting, analytics and the update
+check switched off. The account you create on first start is local.
+
+Set up a project once per batch:
+
+1. **Create** a project, open **Labeling Setup → Custom template → Code**, paste the
+   batch's `label-config.xml` and save.
+2. **Settings → Cloud Storage → Add Source Storage → Local files**, absolute path
+   `<repository>\data\labeling\<batch>\images`. Add it, but do not sync it.
+3. **Settings → Annotation**: turn on using predictions to pre-label tasks.
+4. **Import** the batch's `tasks.json`.
+
+Label every on-court player (head to feet, including partly hidden and far-side players,
+not referees, coaches, bench or spectators) and the ball wherever it is visible. Leave a
+blurred or hidden ball unmarked. When done, **Export → JSON** into the batch folder as
+`export.json`.
