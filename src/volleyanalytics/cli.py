@@ -72,6 +72,21 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_argument("--only-split", choices=("train", "test"), help="Export one split")
     export.add_argument("--seed", type=int, default=1)
     export.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
+    evaluate = commands.add_parser(
+        "evaluate", help="Score a player or ball model against labelled frames"
+    )
+    evaluate.add_argument(
+        "--labels", type=Path, required=True, help="Label Studio export.json or YOLO dataset folder"
+    )
+    evaluate.add_argument("--model-manifest", type=Path, required=True)
+    evaluate.add_argument("--task", choices=("players", "ball"), required=True)
+    evaluate.add_argument("--output", type=Path, required=True, help="New JSON report path")
+    evaluate.add_argument("--split", default="test", help="Dataset split for a YOLO folder")
+    evaluate.add_argument("--image-size", type=int, default=1280)
+    evaluate.add_argument("--threshold", type=float, default=0.3)
+    evaluate.add_argument("--ball-distance", type=float, default=10.0, help="Pixels")
+    evaluate.add_argument("--calibration", type=Path, help="Also score with the court filter")
+    evaluate.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
     studio = commands.add_parser(
         "label-studio", help="Start the local Label Studio (localhost only, no telemetry)"
     )
@@ -111,6 +126,21 @@ def main(argv: list[str] | None = None) -> int:
             if args.format == "text":
                 print(render_text(result))
                 return 0
+        elif args.command == "evaluate":
+            from volleyanalytics.evaluation import evaluate
+
+            result = evaluate(
+                labels=args.labels,
+                model_manifest=args.model_manifest,
+                task=args.task,
+                output=args.output,
+                image_size=args.image_size,
+                threshold=args.threshold,
+                ball_distance=args.ball_distance,
+                calibration_path=args.calibration,
+                split=args.split,
+                device=args.device,
+            )
         elif args.command == "label-studio":
             from volleyanalytics.labeling import start_label_studio
 

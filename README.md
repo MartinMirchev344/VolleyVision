@@ -52,6 +52,16 @@ Model quality is measured on frames from the match labelled by a person. `label-
 prepares frames pre-filled with model boxes and `label-studio` starts a local labelling
 tool; see [labelling](docs/setup.md#labelling-label-studio).
 
+`evaluate` scores a player or ball model against labelled frames: a Label Studio export
+or a YOLO-format dataset such as a VolleyVision export. Players match by box overlap
+(IoU ≥ 0.5) and the ball by centre distance. The JSON report gives precision, recall,
+AP50, player recall by box height (far-court players are small), and the frames with
+the most errors; `--calibration` adds a second score with the court filter applied.
+
+```powershell
+.\.venv\Scripts\python.exe -m volleyanalytics evaluate --labels data/labeling/test-01/export.json --model-manifest data/models/upstream-players/model.json --task players --calibration <court.json> --device 0 --output outputs/eval/players-upstream.json
+```
+
 Inspection prints the content hash needed for a private footage permission record.
 Calibration and inference require that record. Detector inference also requires a
 trusted local checkpoint and an explicitly reviewed model manifest; see
