@@ -95,6 +95,22 @@ def build_parser() -> argparse.ArgumentParser:
     )
     evaluate.add_argument("--net-tolerance-m", type=float, default=0.5)
     evaluate.add_argument("--device", default="cpu", help="cpu or CUDA device index (e.g. 0)")
+    train = commands.add_parser(
+        "train", help="Fine-tune a licensed detector on a YOLO dataset (writes a model manifest)"
+    )
+    train.add_argument("--dataset", type=Path, required=True, help="YOLO dataset folder")
+    train.add_argument("--task", choices=("players", "ball"), required=True)
+    train.add_argument("--base-model-manifest", type=Path, required=True)
+    train.add_argument("--output", type=Path, required=True, help="New model folder")
+    train.add_argument("--model-id", required=True, help="Name recorded in the new manifest")
+    train.add_argument("--image-size", type=int, default=640)
+    train.add_argument("--epochs", type=int, default=40)
+    train.add_argument("--patience", type=int, default=10)
+    train.add_argument("--batch", type=int, default=16)
+    train.add_argument("--workers", type=int, default=4)
+    train.add_argument("--seed", type=int, default=1)
+    train.add_argument("--dataset-source-sha256", help="Hash of the downloaded dataset zip")
+    train.add_argument("--device", default="0", help="cpu or CUDA device index (e.g. 0)")
     studio = commands.add_parser(
         "label-studio", help="Start the local Label Studio (localhost only, no telemetry)"
     )
@@ -150,6 +166,24 @@ def main(argv: list[str] | None = None) -> int:
                 net_tolerance_m=args.net_tolerance_m,
                 split=args.split,
                 device=args.device,
+            )
+        elif args.command == "train":
+            from volleyanalytics.training import train_detector
+
+            result = train_detector(
+                dataset=args.dataset,
+                task=args.task,
+                base_manifest=args.base_model_manifest,
+                output=args.output,
+                model_id=args.model_id,
+                image_size=args.image_size,
+                epochs=args.epochs,
+                patience=args.patience,
+                batch=args.batch,
+                workers=args.workers,
+                seed=args.seed,
+                device=args.device,
+                dataset_source_sha256=args.dataset_source_sha256,
             )
         elif args.command == "label-studio":
             from volleyanalytics.labeling import start_label_studio

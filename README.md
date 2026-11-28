@@ -59,6 +59,15 @@ AP50, player recall by box height (far-court players are small), and the frames 
 the most errors; `--calibration` adds a second score with the court filter applied, and
 `--side near` limits that score to players on the near half (one team).
 
+`train` fine-tunes a licensed detector on a YOLO-format dataset (for example the
+VolleyVision ball dataset) and writes a new model folder whose manifest records the base
+model, dataset version and source hash, settings and validation metrics. Trained models
+are never overwritten.
+
+```powershell
+.\.venv\Scripts\python.exe -m volleyanalytics train --dataset data/datasets/<dataset> --task ball --base-model-manifest data/models/<base>/model.json --output data/models/<new-model> --model-id "<name>" --image-size 640 --epochs 25 --device 0
+```
+
 ```powershell
 .\.venv\Scripts\python.exe -m volleyanalytics evaluate --labels data/labeling/test-01/export.json --model-manifest data/models/upstream-players/model.json --task players --calibration <court.json> --device 0 --output outputs/eval/players-upstream.json
 ```
